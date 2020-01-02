@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: nginx-clash-base
+  labels:
+    app: nginx-clash
+spec:
+  selector:
+    matchLabels:
+      app: nginx-clash
+  replicas: 5
+  template:
+    metadata:
+      name: nginx-clash-base
+      labels:
+        app: nginx-clash
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: nginx
+              topologyKey: kubernetes.io/hostname
+      nodeSelector:
+        paas: cronhpa
+      containers:
+        - name: nginx-clash-base
+          image: registry-vpc.cn-beijing.aliyuncs.com/ailab-paas/nginx:1.1.1
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: godhand-regcred

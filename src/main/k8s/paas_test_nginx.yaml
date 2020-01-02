@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  namespace: godhand-paas-test
+  name: nginx-base
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      name: nginx-base
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-base
+          image: registry-vpc.cn-beijing.aliyuncs.com/ailab-paas/nginx:1.1.1
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 0.5
+              memory: 500Mi
+            limits:
+              cpu: 0.5
+              memory: 500Mi
+      imagePullSecrets:
+        - name: godhand-regcred

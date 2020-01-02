@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: nginx-base-host
+  labels:
+    app: nginx-host
+spec:
+  selector:
+    matchLabels:
+      app: nginx-host
+  replicas: 5
+  template:
+    metadata:
+      name: nginx-base-host
+      labels:
+        app: nginx-host
+    spec:
+      containers:
+        - name: nginx-base
+          image: registry.cn-beijing.aliyuncs.com/ailab-paas/nginx:1.1.1
+          imagePullPolicy: Always
+      hostname: nginx-base-host-lij-lij
+      hostAliases:
+        - ip: 10.19.250.207
+          hostnames:
+            - internal.gateway-godeye-test.facethink.com
+      imagePullSecrets:
+        - name: godhand-regcred

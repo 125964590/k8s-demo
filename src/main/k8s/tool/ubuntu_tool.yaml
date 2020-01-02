@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: tool
+  name: ubuntu
+  labels:
+    app: ubuntu
+spec:
+  selector:
+    matchLabels:
+      app: ubuntu
+  replicas: 1
+  template:
+    metadata:
+      name: ubuntu
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+        - name: ubuntu
+          image: daocloud.io/library/ubuntu:16.10
+          command:
+            - "sudo apt-get update && apt-get install iputils-ping"
+            - "ping www.baidu.com"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1000Mi
+            requests:
+              cpu: "1"
+              memory: 1000Mi
+      imagePullSecrets:
+        - name: godhand-regcred

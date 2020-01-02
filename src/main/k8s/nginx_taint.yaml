@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: nginx-base-toleration
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      name: nginx-base-toleration
+      labels:
+        app: nginx
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node/type
+                    operator: In
+                    values:
+                      - AIASR
+                  - key: cronhpa
+                    operator: In
+                    values:
+                      - paas
+      tolerations:
+        - key: AI_ASR
+          value: paas
+          effect: NoExecute
+        - key: cronhpa
+          value: paas
+          effect: NoExecute
+      containers:
+        - name: nginx-base
+          image: registry-vpc.cn-beijing.aliyuncs.com/ailab-paas/nginx:1.1.1
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 5000Mi
+            limits:
+              memory: 5000Mi
+      imagePullSecrets:
+        - name: godhand-regcred

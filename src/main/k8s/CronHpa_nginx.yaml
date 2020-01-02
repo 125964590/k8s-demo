@@ -1,0 +1,52 @@
+apiVersion: autoscaling.alibabacloud.com/v1beta1
+kind: CronHorizontalPodAutoscaler
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: cronhpa-sample
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-base
+  jobs:
+    - name: "scale-down"
+      schedule: "0 */10 * * * *"
+      targetSize: 6
+    - name: "scale-up"
+      schedule: "0 */15 * * * *"
+      targetSize: 2
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: nginx-base
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 5
+  template:
+    metadata:
+      name: nginx-base
+      labels:
+        app: nginx
+    spec:
+      nodeSelector:
+        paas: cronhpa
+      containers:
+        - name: nginx-base
+                 registry-vpc.cn-beijing.aliyuncs.com/ailab-paas/godhand-discovery-eureka-server-image:1.2.21
+          image: registry-vpc.cn-beijing.aliyuncs.com/ailab-paas/nginx:1.1.1
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 500Mi
+            limits:
+              memory: 500Mi
+      imagePullSecrets:
+        - name: godhand-regcred
