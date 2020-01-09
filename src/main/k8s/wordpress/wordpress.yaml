@@ -19,7 +19,7 @@ spec:
       containers:
         - name: wordpress
           image: wordpress
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: WORDPRESS_DB_HOST
               value: "mysql.jbzm:3306"
